@@ -1,0 +1,35 @@
+# This file is based on https://github.com/lima-vm/lima/blob/master/examples/alpine.yaml
+arch: "x86_64"
+images:
+- location: https://github.com/lima-vm/alpine-lima/releases/download/v0.1.8/alpine-lima-std-3.13.5-x86_64.iso
+  arch: "x86_64"
+  digest: "sha512:8185d679a11527f804a9b6d3c05c4b7299f9b3a297381b490d713a9e3d25c5e6b818be6da7a4c45191a2a5bd6cef7083fe04f70454c8466e7d4ceda1b81ee379"
+
+mounts:
+- location: "~"
+  writable: false
+- location: "/tmp/lima"
+  writable: true
+
+firmware:
+  legacyBIOS: true
+
+containerd:
+  system: false
+  user: false
+
+ssh:
+  localPort: 10034
+
+provision:
+  - mode: system
+    script: |
+      #!/bin/sh
+      set -eux -o pipefail
+      apk add docker
+      service docker start
+  - mode: user
+    script: |
+      #!/bin/sh
+      set -eux -o pipefail
+      sudo usermod -a -G docker $(whoami)
