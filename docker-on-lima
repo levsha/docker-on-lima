@@ -3,8 +3,6 @@
 set -e
 
 LIMA_INSTANCE=$(basename $0)
-DOCKER_SYSTEM=/var/run/docker.sock
-DOCKER_USER=~/.docker/docker.sock
 
 case "$1" in
 start)
@@ -20,17 +18,9 @@ start)
 	else
 		limactl start "${CFG}" --tty=false
 	fi
-
-	# TODO: https://github.com/lima-vm/lima/issues/221
-	rm "${DOCKER_USER}" || true
-	ssh -p $(awk '/localPort:/ {print $2}' "${CFG}") -i ~/.lima/_config/user -o IdentitiesOnly=yes -F /dev/null -o NoHostAuthenticationForLocalhost=yes \
-		-L ${DOCKER_USER}:${DOCKER_SYSTEM} -N 127.0.0.1 &
-
-	if [ ! -L ${DOCKER_SYSTEM} -o "$(readlink ${DOCKER_SYSTEM})" != "${DOCKER_USER}" ]
-	then
-		sudo rm -f ${DOCKER_SYSTEM} || true
-		sudo ln -s ${DOCKER_USER} ${DOCKER_SYSTEM}
-	fi
+	docker context update ${LIMA_INSTANCE} --docker="host=tcp://localhost:2375" ||\
+	docker context create ${LIMA_INSTANCE} --docker="host=tcp://localhost:2375"
+	docker context use ${LIMA_INSTANCE}
 	;;
 stop)
 	limactl stop ${LIMA_INSTANCE}

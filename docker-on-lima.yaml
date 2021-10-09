@@ -18,15 +18,13 @@ containerd:
   system: false
   user: false
 
-ssh:
-  localPort: 10034
-
 provision:
   - mode: system
     script: |
       #!/bin/sh
       set -eux -o pipefail
       apk add docker
+      sed -i.back 's|DOCKER_OPTS.*|DOCKER_OPTS="-H tcp://0.0.0.0:2375"|' /etc/conf.d/docker
       service docker start
   - mode: user
     script: |
