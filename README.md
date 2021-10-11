@@ -7,7 +7,7 @@ Guest OS (and docker as result) is always x86_64. Yes, even on M1.
 # Install
 
 ```sh
-brew install lima
+brew install docker lima
 cd ~/src
 git clone https://github.com/levsha/docker-on-lima.git
 ln -s $(pwd)/docker-on-lima/docker-on-lima ~/bin/
