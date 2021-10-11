@@ -21,4 +21,5 @@ docker ...
 
 # Known issues
 * It takes about a minute for the provision script to install and start dockerd. Therefore `docker` returns `Cannot connect to the Docker daemon ...` right after start.
+* Volume binds are read-only by default. You have to [change "~" to be writable](https://github.com/levsha/docker-on-lima/blob/main/docker-on-lima.yaml#L10) (and re-create VM: `docker-on-lima stop; docker-on-lima rm; docker-on-lima start`). **DO THIS ON YOUR RISK!**
 * [kind](https://kind.sigs.k8s.io/) does not work on alpine.
